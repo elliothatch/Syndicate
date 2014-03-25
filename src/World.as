@@ -1,36 +1,38 @@
 package  
 {
+	import org.flixel.FlxGroup;
 	/**
 	 * ...
 	 * @author Elliot
 	 */
-	public class World 
-	{
-		private static const TILE_FLOOR:int = 0;
-		private static const TILE_HALFWALL:int = 1;
-		private static const TILE_WALL:int = 2;
-		
-		private var m_tiles:Vector.<Vector.<int>>;
+	public class World extends FlxGroup
+	{	
+		private var m_tiles:Vector.<Vector.<Tile>>;
 		private var m_actors:Vector.<Actor>;
 		private var m_idleActors:Vector.<Actor>;
 		
 		private var m_currentTurn:uint;
 		
-		public function World() 
+		public function World()
 		{
-			m_tiles = new Vector.<Vector.<int>>();
+			super();
+			m_tiles = new Vector.<Vector.<Tile>>();
 			for (var x:int = 0; x < 50; x++)
 			{
-				m_tiles.push(new Vector.<int>());
+				m_tiles.push(new Vector.<Tile>());
 				for (var y:int = 0; y < 50; y++)
 				{
 					if (x == 0 || y == 0 || x == 49 || y == 49)
 					{
-						m_tiles[x].push(TILE_WALL);
+						var tile:Tile = new Tile(x, y, Tile.TILE_WALL);
+						m_tiles[x].push(tile);
+						add(tile);
 					}
 					else
 					{
-						m_tiles[x].push(TILE_FLOOR);
+						var tile1:Tile = new Tile(x, y, Tile.TILE_FLOOR);
+						m_tiles[x].push(tile1);
+						add(tile1);
 					}
 				}
 			}
@@ -54,6 +56,7 @@ package
 		public function addActor(actor:Actor):void
 		{
 			m_actors.push(actor);
+			add(actor);
 		}
 		
 		public function advanceTurn():void
@@ -85,6 +88,11 @@ package
 			return m_idleActors.pop();
 		}
 		
+		public function moveActor(X:int, Y:int, actor:Actor):void
+		{
+			actor.setPosition(X, Y);
+			actor.changeMoveCooldown(1);
+		}
 	}
 
 }

@@ -23,18 +23,14 @@ package
 			playerActor = GameManager.instance().playerActor;
 			currentActor = null;
 			
-			//FlxG.camera.width = FlxG.stage.stageWidth;
-			//FlxG.camera.height = FlxG.stage.stageHeight;
-			
 			add(world);
-			trace("create playstate");
 			
 		}
 		
 		override public function update():void
 		{
-			FlxG.camera.x = playerActor.getGridX() * -Tile.TILE_SIZE_X + FlxG.stage.stageWidth/2.0;
-			FlxG.camera.y = playerActor.getGridY() * -Tile.TILE_SIZE_Y + FlxG.stage.stageHeight / 2.0;
+			FlxG.camera.x = (playerActor.getGridX() - int(GameManager.instance().screenTileWidth / 2)) * -Tile.TILE_SIZE_X;
+			FlxG.camera.y = (playerActor.getGridY() - int(GameManager.instance().screenTileHeight / 2)) * -Tile.TILE_SIZE_Y;
 			//if(!animationPlaying)
 			if (currentActor == null)
 				currentActor = world.getNextIdleActor();

@@ -19,10 +19,14 @@ package
 		
 		public var world:World;
 		public var playerActor:Actor;
+		public var screenTileWidth:int;
+		public var screenTileHeight:int;
 		
 		public function GameManager() 
 		{
-			world = new World(100,100);
+			world = new World(50,50);
+			screenTileWidth = int(Math.ceil(Number(FlxG.stage.stageWidth) / Number(Tile.TILE_SIZE_X)));
+			screenTileHeight = int(Math.ceil(Number(FlxG.stage.stageHeight) / Number(Tile.TILE_SIZE_Y)));
 			
 			playerActor = new Actor(1,1);
 			world.addActor(playerActor);

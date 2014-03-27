@@ -11,8 +11,8 @@ package
 		private var m_actors:Vector.<Actor>;
 		private var m_idleActors:Vector.<Actor>;
 		
-		private var m_width;
-		private var m_height;
+		private var m_width:int;
+		private var m_height:int;
 		
 		private var m_currentTurn:uint;
 		
@@ -98,13 +98,13 @@ package
 		
 		override public function draw():void
 		{
-			//first draw all the tiles
+			//first draw all the tiles on screen
 			for (var x:int = 0; x < m_width; x++)
 			{
 				for (var y:int = 0; y < m_height; y++)
 				{
-					if (x * Tile.TILE_SIZE_X > -FlxG.camera.x && x * Tile.TILE_SIZE_X < -FlxG.camera.x + FlxG.stage.stageWidth &&
-						y * Tile.TILE_SIZE_Y > -FlxG.camera.y && y * Tile.TILE_SIZE_Y < -FlxG.camera.y + FlxG.stage.stageHeight)
+					if (x >= FlxG.camera.x / -Tile.TILE_SIZE_X && x < FlxG.camera.x / -Tile.TILE_SIZE_X + GameManager.instance().screenTileWidth &&
+						y >= FlxG.camera.y / -Tile.TILE_SIZE_Y && y < FlxG.camera.y / -Tile.TILE_SIZE_Y + GameManager.instance().screenTileHeight)
 					{
 						m_tiles[x][y].draw();
 					}

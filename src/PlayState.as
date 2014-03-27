@@ -19,20 +19,22 @@ package
 			super.create();
 			FlxG.bgColor = 0xffffffff;
 			
-			world = new World();
-			add(world);
-			
+			world = GameManager.instance().world;
+			playerActor = GameManager.instance().playerActor;
 			currentActor = null;
-			playerActor = new Actor(1,1);
-			world.addActor(playerActor);
-			world.addActor(new Actor(2,1));
-			world.addActor(new Actor(3,6));
+			
+			//FlxG.camera.width = FlxG.stage.stageWidth;
+			//FlxG.camera.height = FlxG.stage.stageHeight;
+			
+			add(world);
+			trace("create playstate");
 			
 		}
 		
 		override public function update():void
 		{
-			
+			FlxG.camera.x = playerActor.getGridX() * -Tile.TILE_SIZE_X + FlxG.stage.stageWidth/2.0;
+			FlxG.camera.y = playerActor.getGridY() * -Tile.TILE_SIZE_Y + FlxG.stage.stageHeight / 2.0;
 			//if(!animationPlaying)
 			if (currentActor == null)
 				currentActor = world.getNextIdleActor();
@@ -62,7 +64,9 @@ package
 					acted = true;
 				}
 				if (acted)
+				{
 					currentActor = world.getNextIdleActor();
+				}
 			}
 			else
 			{
@@ -77,5 +81,6 @@ package
 			
 			super.update();
 		}
+		
 	}
 }

@@ -106,18 +106,18 @@ package
 			actor.changeMoveCooldown(1);
 		}
 		
-		public function equipItem(actor:Actor, item:Item):void
+		public function equipWeapon(actor:Actor, weapon:Weapon):void
 		{
-			actor.equipItem(item);
-			removeItem(item);
+			actor.equipWeapon(weapon);
+			removeItem(weapon);
 			actor.changeMoveCooldown(1);
 		}
 		
-		public function unequipItem(actor:Actor):void
+		public function unequipWeapon(actor:Actor):void
 		{
-			var item:Item = actor.getEquippedItem();
-			actor.equipItem(null);
-			addItem(actor.getGridX(), actor.getGridY(), item);
+			var weapon:Weapon = actor.getEquippedWeapon();
+			actor.equipWeapon(null);
+			addItem(actor.getGridX(), actor.getGridY(), weapon);
 			actor.changeMoveCooldown(1);
 		}
 		

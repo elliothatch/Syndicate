@@ -38,7 +38,6 @@ package
 			var acted:Boolean = false;
 			if (currentActor == playerActor)
 			{
-				trace(world.getItems(currentActor.getGridX(), currentActor.getGridY()).length);
 				//get input
 				if (FlxG.keys.justPressed("RIGHT"))
 				{
@@ -77,15 +76,15 @@ package
 					var items:Vector.<Item> = world.getItems(currentActor.getGridX(), currentActor.getGridY());
 					if (items.length > 0)
 					{
-						world.equipItem(currentActor, items[0]);
+						world.equipWeapon(currentActor, items[0] as Weapon);
 						acted = true;
 					}
 				}
 				else if (FlxG.keys.justPressed("Z"))
 				{
-					if (currentActor.getEquippedItem() != null)
+					if (currentActor.getEquippedWeapon() != null)
 					{
-						world.unequipItem(currentActor);
+						world.unequipWeapon(currentActor);
 						acted = true;
 					}
 				}

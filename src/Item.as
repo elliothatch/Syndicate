@@ -1,12 +1,14 @@
 package  
 {
 	/**
-	 * ...
+	 * Abstract Base Class
 	 * @author Elliot
 	 */
 	import org.flixel.*;
 	public class Item extends FlxSprite
 	{
+		public static const ITEM_WEAPON:int = 1;
+		
 		private var m_gridX:int;
 		private var m_gridY:int;
 		private var m_type:int;

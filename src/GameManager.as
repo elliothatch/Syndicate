@@ -33,7 +33,7 @@ package
 			world.addActor(new Actor(2,1));
 			world.addActor(new Actor(3, 6));
 			
-			world.addItem(5, 4, new Item(5, 4, 1));
+			world.addItem(5, 4, new Weapon(5, 4, 1));
 			
 			reloadWorldSize();
 		}

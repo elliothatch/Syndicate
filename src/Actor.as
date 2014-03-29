@@ -11,7 +11,7 @@ package
 		private var m_gridX:int;
 		private var m_gridY:int;
 		
-		private var m_equippedItem:Item;
+		private var m_equippedWeapon:Weapon;
 		
 		public function Actor(X:int, Y:int) 
 		{
@@ -21,7 +21,7 @@ package
 			m_moveCooldown = 0;
 			m_gridX = X;
 			m_gridY = Y;
-			m_equippedItem = null;
+			m_equippedWeapon = null;
 		}
 		
 		public function changeMoveCooldown(amount:int):void
@@ -52,14 +52,14 @@ package
 			return m_gridY;
 		}
 		
-		public function equipItem(item:Item):void
+		public function equipWeapon(weapon:Weapon):void
 		{
-			m_equippedItem = item;
+			m_equippedWeapon = weapon;
 		}
 		
-		public function getEquippedItem():Item
+		public function getEquippedWeapon():Weapon
 		{
-			return m_equippedItem;
+			return m_equippedWeapon;
 		}
 		
 	}

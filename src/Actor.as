@@ -11,6 +11,8 @@ package
 		private var m_gridX:int;
 		private var m_gridY:int;
 		
+		private var m_equippedItem:Item;
+		
 		public function Actor(X:int, Y:int) 
 		{
 			super(X * Tile.TILE_SIZE_X, Y * Tile.TILE_SIZE_Y);
@@ -19,6 +21,7 @@ package
 			m_moveCooldown = 0;
 			m_gridX = X;
 			m_gridY = Y;
+			m_equippedItem = null;
 		}
 		
 		public function changeMoveCooldown(amount:int):void
@@ -47,6 +50,16 @@ package
 		public function getGridY():int
 		{
 			return m_gridY;
+		}
+		
+		public function equipItem(item:Item):void
+		{
+			m_equippedItem = item;
+		}
+		
+		public function getEquippedItem():Item
+		{
+			return m_equippedItem;
 		}
 		
 	}

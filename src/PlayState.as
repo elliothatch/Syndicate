@@ -38,26 +38,56 @@ package
 			var acted:Boolean = false;
 			if (currentActor == playerActor)
 			{
+				trace(world.getItems(currentActor.getGridX(), currentActor.getGridY()).length);
 				//get input
 				if (FlxG.keys.justPressed("RIGHT"))
 				{
-					world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
-					acted = true;
+					if (world.getTile(currentActor.getGridX() + 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
+						acted = true;
+					}
 				}
 				else if (FlxG.keys.justPressed("UP"))
 				{
-					world.moveActor(currentActor.getGridX(), currentActor.getGridY() - 1, currentActor);
-					acted = true;
+					if (world.getTile(currentActor.getGridX(), currentActor.getGridY() - 1).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX(), currentActor.getGridY() - 1, currentActor);
+						acted = true;
+					}
 				}
 				else if (FlxG.keys.justPressed("LEFT"))
 				{
-					world.moveActor(currentActor.getGridX() - 1, currentActor.getGridY(), currentActor);
-					acted = true;
+					if (world.getTile(currentActor.getGridX() - 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX() - 1, currentActor.getGridY(), currentActor);
+						acted = true;
+					}
 				}
 				else if (FlxG.keys.justPressed("DOWN"))
 				{
-					world.moveActor(currentActor.getGridX(), currentActor.getGridY() + 1, currentActor);
-					acted = true;
+					if (world.getTile(currentActor.getGridX(), currentActor.getGridY() + 1).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX(), currentActor.getGridY() + 1, currentActor);
+						acted = true;
+					}
+				}
+				else if (FlxG.keys.justPressed("X"))
+				{
+					var items:Vector.<Item> = world.getItems(currentActor.getGridX(), currentActor.getGridY());
+					if (items.length > 0)
+					{
+						world.equipItem(currentActor, items[0]);
+						acted = true;
+					}
+				}
+				else if (FlxG.keys.justPressed("Z"))
+				{
+					if (currentActor.getEquippedItem() != null)
+					{
+						world.unequipItem(currentActor);
+						acted = true;
+					}
 				}
 				if (acted)
 				{
@@ -69,7 +99,10 @@ package
 				while (currentActor != playerActor)
 				{
 					//ai control
-					world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
+					if (world.getTile(currentActor.getGridX() + 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
+					}
 					currentActor.changeMoveCooldown(1);
 					currentActor = world.getNextIdleActor();
 				}

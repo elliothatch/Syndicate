@@ -40,6 +40,25 @@ package
 			}
 		}
 		
+		public function addItem(item:Item):void
+		{
+			m_items.push(item);
+		}
+		
+		public function removeItem(item:Item):void
+		{
+			m_items.splice(m_items.indexOf(item), 1);
+		}
+		
+		public function getItems():Vector.<Item>
+		{
+			return m_items;
+		}
+		
+		public function getType():int
+		{
+			return m_type;
+		}
 	}
 
 }

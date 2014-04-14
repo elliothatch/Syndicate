@@ -1,5 +1,6 @@
 package  
 {
+	import flash.geom.Point;
 	import org.flixel.*;
 	/**
 	 * ...
@@ -12,7 +13,10 @@ package
 		
 		private var m_tiles:Vector.<Vector.<Tile>>;
 		private var m_actors:Vector.<Actor>;
+		private var m_items:Vector.<Item>;
 		private var m_idleActors:Vector.<Actor>;
+		
+		private var m_tilesVisible:Vector.<Vector.<Vector.<Actor>>>;
 		
 		private var m_width:int;
 		private var m_height:int;
@@ -32,12 +36,14 @@ package
 			m_tiles = new Vector.<Vector.<Tile>>();
 			m_width = width;
 			m_height = height;
+			
 			for (var x:int = 0; x < width; x++)
 			{
 				m_tiles.push(new Vector.<Tile>());
 				for (var y:int = 0; y < height; y++)
 				{
-					if (x == 0 || y == 0 || x == width-1 || y == height-1)
+					if (x == 0 || y == 0 || x == width - 1 || y == height - 1 ||
+						(x == 5 && (y < 5 || y > 12)) || (x == 10 && y == 10))
 					{
 						var tile:Tile = new Tile(x, y, Tile.TILE_WALL);
 						m_tiles[x].push(tile);
@@ -50,7 +56,18 @@ package
 				}
 			}
 			
+			m_tilesVisible = new Vector.<Vector.<Vector.<Actor>>>()
+			for (x = 0; x < width; x++)
+			{
+				m_tilesVisible.push(new Vector.<Vector.<Actor>>());
+				for (y = 0; y < height; y++)
+				{
+					m_tilesVisible[x].push(new Vector.<Actor>());
+				}
+			}
+			
 			m_actors = new Vector.<Actor>();
+			m_items = new Vector.<Item>();
 			m_idleActors = new Vector.<Actor>();
 			
 			m_currentTurn = 0;
@@ -123,25 +140,68 @@ package
 		
 		public function addItem(X:int, Y:int, item:Item):void
 		{
-			m_tiles[X][Y].addItem(item);
+			m_items.push(item);
 			item.setPosition(X, Y);
 			m_itemGroup.add(item);
 		}
 		
 		public function removeItem(item:Item):void
 		{
-			m_tiles[item.getGridX()][item.getGridY()].removeItem(item);
+			m_items.splice(m_items.indexOf(item), 1);
 			m_itemGroup.remove(item);
 		}
 		
 		public function getItems(X:int, Y:int):Vector.<Item>
 		{
-			return m_tiles[X][Y].getItems();
+			var items:Vector.<Item> = new Vector.<Item>();
+			for each(var item:Item in m_items)
+			{
+				if (item.getGridX() == X && item.getGridY() == Y)
+					items.push(item);
+			}
+			return items;
 		}
 		
 		public function getTile(X:int, Y:int):Tile
 		{
 			return m_tiles[X][Y];
+		}
+		
+		public function calculateVisibility(actor:Actor):void
+		{
+			//reset all visibility
+			for (var x:int = 0; x < m_width; x++)
+			{
+				for (var y:int = 0; y < m_height; y++)
+				{
+					m_tilesVisible[x][y].splice(0, m_tilesVisible[x][y].length);
+				}
+			}
+			
+			var originX:int = actor.getGridX();
+			var originY:int = actor.getGridY();
+			var radius:int = 20;
+			var circle:Circle = new Circle(originX, originY, radius);
+			for each(var circlePoint:Point in circle.points)
+			{
+				var ray:Line = new Line(originX, originY, circlePoint.x, circlePoint.y);
+				for each(var rayPoint:Point in ray.points)
+				{
+					var inWorld:Boolean = rayPoint.x >= 0 && rayPoint.y >= 0 && rayPoint.x < m_width && rayPoint.y < m_height;
+					
+					if (inWorld)
+					{
+						var obstructed:Boolean = m_tiles[rayPoint.x][rayPoint.y].getType() == Tile.TILE_WALL;
+						m_tilesVisible[rayPoint.x][rayPoint.y].push(actor);
+						if (obstructed)
+							break;
+					}
+					else
+						break;
+					//if(obstructed)
+					//	break;
+				}
+			}
 		}
 		
 		override public function draw():void
@@ -151,7 +211,8 @@ package
 			{
 				for (var y:int = 0; y < m_height; y++)
 				{
-					if (x >= FlxG.camera.x / -Tile.TILE_SIZE_X && 
+					if (m_tilesVisible[x][y].length > 0 &&
+						x >= FlxG.camera.x / -Tile.TILE_SIZE_X && 
 						x < FlxG.camera.x / -Tile.TILE_SIZE_X + GameManager.instance().screenTileWidth &&
 						y >= FlxG.camera.y / -Tile.TILE_SIZE_Y && 
 						y < FlxG.camera.y / -Tile.TILE_SIZE_Y + GameManager.instance().screenTileHeight)

@@ -15,14 +15,15 @@ package
 		public static const TILE_SIZE_Y:Number = 15;
 		
 		private var m_type:int;
-		private var m_items:Vector.<Item>
+		private var m_background:FlxSprite;
 		
 		public function Tile(X:int, Y:int, type:int) 
 		{
 			super(X * TILE_SIZE_X, Y * TILE_SIZE_Y);
 			
 			m_type = type;
-			m_items = new Vector.<Item>();
+			m_background = new FlxSprite(x, y);
+			m_background.makeGraphic(TILE_SIZE_X, TILE_SIZE_Y, 0xffffffff);
 			
 			if (m_type == TILE_FLOOR)
 			{
@@ -36,23 +37,14 @@ package
 			}
 			else
 			{
-				makeGraphic(TILE_SIZE_X, TILE_SIZE_Y, 0xff111111);
+				makeGraphic(TILE_SIZE_X, TILE_SIZE_Y, 0xff888888);
 			}
 		}
 		
-		public function addItem(item:Item):void
+		override public function draw():void
 		{
-			m_items.push(item);
-		}
-		
-		public function removeItem(item:Item):void
-		{
-			m_items.splice(m_items.indexOf(item), 1);
-		}
-		
-		public function getItems():Vector.<Item>
-		{
-			return m_items;
+			m_background.draw();
+			super.draw();
 		}
 		
 		public function getType():int

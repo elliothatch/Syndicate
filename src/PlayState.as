@@ -4,6 +4,7 @@ package
 	 * ...
 	 * @author Elliot Hatch
 	 */
+	import flash.geom.Point;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FlxPowerTools;
 	
@@ -13,33 +14,84 @@ package
 		
 		private var currentActor:Actor;
 		private var playerActor:Actor;
+		private var cameraGridX:int;
+		private var cameraGridY:int;
+		private var cameraAimMode:Boolean;
+		private var aimLine:FlxGroup;
+		private var acted:Boolean;
 		
 		override public function create():void
 		{
 			super.create();
-			FlxG.bgColor = 0xffffffff;
+			FlxG.bgColor = 0xff333333;
 			
 			world = GameManager.instance().world;
 			playerActor = GameManager.instance().playerActor;
 			currentActor = null;
+			cameraGridX = 0;
+			cameraGridY = 0;
+			cameraAimMode = false;
+			aimLine = new FlxGroup();
+			acted = false;
 			
 			add(world);
+			add(aimLine);
 			
 		}
 		
 		override public function update():void
 		{
-			FlxG.camera.x = (playerActor.getGridX() - int(GameManager.instance().screenTileWidth / 2)) * -Tile.TILE_SIZE_X;
-			FlxG.camera.y = (playerActor.getGridY() - int(GameManager.instance().screenTileHeight / 2)) * -Tile.TILE_SIZE_Y;
+			if (!cameraAimMode)
+			{
+				cameraGridX = playerActor.getGridX();
+				cameraGridY = playerActor.getGridY();
+			}
+			FlxG.camera.x = (cameraGridX - int(GameManager.instance().screenTileWidth / 2)) * -Tile.TILE_SIZE_X;
+			FlxG.camera.y = (cameraGridY - int(GameManager.instance().screenTileHeight / 2)) * -Tile.TILE_SIZE_Y;
 			//if(!animationPlaying)
 			if (currentActor == null)
 				currentActor = world.getNextIdleActor();
 			
-			var acted:Boolean = false;
+			acted = false;
 			if (currentActor == playerActor)
 			{
 				//get input
-				if (FlxG.keys.justPressed("RIGHT"))
+				//more branches for menus, etc.
+				if (!cameraAimMode)
+				{
+					processInput()
+				}
+				else
+				{
+					processInputAimMode();
+				}
+				if (acted)
+				{
+					world.calculateVisibility(currentActor);
+					currentActor = world.getNextIdleActor();
+				}
+			}
+			else
+			{
+				while (currentActor != playerActor)
+				{
+					//ai control
+					if (world.getTile(currentActor.getGridX() + 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
+					{
+						world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
+					}
+					currentActor.changeMoveCooldown(1);
+					currentActor = world.getNextIdleActor();
+				}
+			}
+			
+			super.update();
+		}
+		
+		
+		private function processInput():void
+		{
+			if (FlxG.keys.justPressed("RIGHT"))
 				{
 					if (world.getTile(currentActor.getGridX() + 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
 					{
@@ -88,27 +140,64 @@ package
 						acted = true;
 					}
 				}
-				if (acted)
+				else if (FlxG.keys.justPressed("F"))
 				{
-					currentActor = world.getNextIdleActor();
+					//enter aim mode
+					cameraAimMode = true;
+					updateAimLine();
 				}
-			}
-			else
-			{
-				while (currentActor != playerActor)
+		}
+		private function processInputAimMode():void
+		{
+			if (FlxG.keys.justPressed("RIGHT"))
 				{
-					//ai control
-					if (world.getTile(currentActor.getGridX() + 1, currentActor.getGridY()).getType() == Tile.TILE_FLOOR)
-					{
-						world.moveActor(currentActor.getGridX() + 1, currentActor.getGridY(), currentActor);
-					}
-					currentActor.changeMoveCooldown(1);
-					currentActor = world.getNextIdleActor();
+					cameraGridX++;
+					updateAimLine();
 				}
-			}
-			
-			super.update();
+				else if (FlxG.keys.justPressed("UP"))
+				{
+					cameraGridY--;
+					updateAimLine();
+				}
+				else if (FlxG.keys.justPressed("LEFT"))
+				{
+					cameraGridX--;
+					updateAimLine();
+				}
+				else if (FlxG.keys.justPressed("DOWN"))
+				{
+					cameraGridY++;
+					updateAimLine();
+				}
+				else if (FlxG.keys.justPressed("F"))
+				{
+					for each(var oldSprite:FlxSprite in aimLine)
+						oldSprite.destroy();
+					aimLine.clear();
+					cameraAimMode = false;
+				}
 		}
 		
+		private function updateAimLine():void
+		{
+			for each(var oldSprite:FlxSprite in aimLine)
+				oldSprite.destroy();
+			aimLine.clear();
+			var line:Line = new Line(currentActor.getGridX(), currentActor.getGridY(), cameraGridX, cameraGridY);
+			var obstructed:Boolean = false;
+			for each(var point:Point in line.points)
+			{
+				var sprite:FlxSprite = new FlxSprite(point.x * Tile.TILE_SIZE_X, point.y * Tile.TILE_SIZE_X);
+				if (!obstructed && world.getTile(point.x, point.y).getType() == Tile.TILE_WALL)
+				{
+					obstructed = true;
+				}
+				if(!obstructed)
+					sprite.makeGraphic(Tile.TILE_SIZE_X, Tile.TILE_SIZE_Y, 0xff33ff33);
+				else
+					sprite.makeGraphic(Tile.TILE_SIZE_X, Tile.TILE_SIZE_Y, 0xffff3333);
+				aimLine.add(sprite);
+			}
+		}
 	}
 }

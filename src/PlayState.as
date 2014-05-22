@@ -151,23 +151,35 @@ package
 		{
 			if (FlxG.keys.justPressed("RIGHT"))
 				{
-					cameraGridX++;
-					updateAimLine();
+					if (cameraGridX < world.getWidth())
+					{
+						cameraGridX++;
+						updateAimLine();
+					}
 				}
 				else if (FlxG.keys.justPressed("UP"))
 				{
-					cameraGridY--;
-					updateAimLine();
+					if (cameraGridY > 0)
+					{
+						cameraGridY--;
+						updateAimLine();
+					}
 				}
 				else if (FlxG.keys.justPressed("LEFT"))
 				{
-					cameraGridX--;
-					updateAimLine();
+					if (cameraGridX > 0)
+					{
+						cameraGridX--;
+						updateAimLine();
+					}
 				}
 				else if (FlxG.keys.justPressed("DOWN"))
 				{
-					cameraGridY++;
-					updateAimLine();
+					if (cameraGridY < world.getHeight())
+					{
+						cameraGridY++;
+						updateAimLine();
+					}
 				}
 				else if (FlxG.keys.justPressed("F"))
 				{
@@ -185,10 +197,12 @@ package
 			aimLine.clear();
 			var line:Line = new Line(currentActor.getGridX(), currentActor.getGridY(), cameraGridX, cameraGridY);
 			var obstructed:Boolean = false;
+			var visible:Boolean = world.tileVisible(cameraGridX, cameraGridY, currentActor);
 			for each(var point:Point in line.points)
 			{
 				var sprite:FlxSprite = new FlxSprite(point.x * Tile.TILE_SIZE_X, point.y * Tile.TILE_SIZE_X);
-				if (!obstructed && world.getTile(point.x, point.y).getType() == Tile.TILE_WALL)
+				if (!visible && !obstructed && 
+				(world.getTile(point.x, point.y).getType() == Tile.TILE_WALL || !world.tileVisible(point.x, point.y, currentActor)))
 				{
 					obstructed = true;
 				}

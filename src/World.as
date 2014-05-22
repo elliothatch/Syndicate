@@ -43,7 +43,7 @@ package
 				for (var y:int = 0; y < height; y++)
 				{
 					if (x == 0 || y == 0 || x == width - 1 || y == height - 1 ||
-						(x == 5 && (y < 5 || y > 12)) || (x == 10 && y == 10))
+						(x == 5 && (y < 4 || y > 12)) || (x == 10 && y == 10))
 					{
 						var tile:Tile = new Tile(x, y, Tile.TILE_WALL);
 						m_tiles[x].push(tile);
@@ -165,6 +165,16 @@ package
 		public function getTile(X:int, Y:int):Tile
 		{
 			return m_tiles[X][Y];
+		}
+		
+		public function tileVisible(X:int, Y:int, actor:Actor):Boolean
+		{
+			for each(var a:Actor in m_tilesVisible[X][Y])
+			{
+				if (a == actor)
+					return true;
+			}
+			return false;
 		}
 		
 		public function calculateVisibility(actor:Actor):void

@@ -190,9 +190,10 @@ package
 			
 			var originX:int = actor.getGridX();
 			var originY:int = actor.getGridY();
-			var radius:int = 20;
-			var circle:Circle = new Circle(originX, originY, radius);
-			for each(var circlePoint:Point in circle.points)
+			var radius:int = 15;
+			//naively checks every point in circle--optimize if needed
+			var circle:Circle = new Circle(originX, originY, radius, true);
+			for each(var circlePoint:Point in circle.m_points)
 			{
 				var ray:Line = new Line(originX, originY, circlePoint.x, circlePoint.y);
 				for each(var rayPoint:Point in ray.points)

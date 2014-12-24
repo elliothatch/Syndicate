@@ -9,19 +9,24 @@ package
 	public class Circle
 	{
 		
-		public var points:Vector.<Point>;
-		public var center:Point;
-		public var radius:int;
+		public var m_points:Vector.<Point>;
+		public var m_center:Point;
+		public var m_radius:int;
+		public var m_filled:Boolean;
 		
-		public function Circle(x0:int, y0:int, radius:int)
+		public function Circle(x0:int, y0:int, radius:int, filled:Boolean)
 		{
-			points = new Vector.<Point>();
-			center = new Point(x0, y0);
-			radius = radius;
-			calculate(x0, y0, radius);
+			m_points = new Vector.<Point>();
+			m_center = new Point(x0, y0);
+			m_radius = radius;
+			m_filled = filled;
+			if(!filled)
+				calculate_unfilled(x0, y0, radius);
+			else
+				calculate_filled(x0, y0, radius);
 		}
 		
-		private function calculate(x0:int, y0:int, radius:int):void
+		private function calculate_unfilled(x0:int, y0:int, radius:int):void
 		{
 			var x:int = radius;
 			var y:int = 0;
@@ -59,7 +64,19 @@ package
 			{
 				for (var j:int = 0; j < octants[i].length; j++)
 				{
-					points.push(octants[i][j]);
+					m_points.push(octants[i][j]);
+				}
+			}
+		}
+		
+		private function calculate_filled(x0:int, y0:int, radius:int):void
+		{
+			for (var x:int = -radius; x < radius; x++)
+			{
+				for (var y:int = -radius; y < radius; y++)
+				{
+					if (x * x + y * y < radius * radius)
+						m_points.push(new Point(x + x0, y + y0));
 				}
 			}
 		}	

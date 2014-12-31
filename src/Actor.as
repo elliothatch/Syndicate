@@ -13,6 +13,10 @@ package
 		
 		private var m_equippedWeapon:Weapon;
 		
+		private var m_turnsAimed:int;
+		private var m_targetAimed:Actor;
+		private var m_recoil:Number;
+		
 		public function Actor(X:int, Y:int) 
 		{
 			super(X * Tile.TILE_SIZE_X, Y * Tile.TILE_SIZE_Y);
@@ -22,6 +26,9 @@ package
 			m_gridX = X;
 			m_gridY = Y;
 			m_equippedWeapon = null;
+			
+			m_turnsAimed = 0;
+			m_targetAimed = null;
 		}
 		
 		public function changeMoveCooldown(amount:int):void
@@ -60,6 +67,53 @@ package
 		public function getEquippedWeapon():Weapon
 		{
 			return m_equippedWeapon;
+		}
+		
+		public function aimAtTarget(target:Actor):void
+		{
+			if(target == m_targetAimed)
+				m_turnsAimed++;
+			else
+			{
+				m_targetAimed = target;
+				m_turnsAimed = 1;
+			}
+		}
+		
+		public function cancelAim():void
+		{
+			m_targetAimed = null;
+			m_turnsAimed = 0;
+		}
+		
+		public function getHitChance(target:Actor):Number
+		{
+			//weapon stats: accuracy over distance, recoil
+			//player stats: weapon skill, recoil recovery, recoil resistance, specific buffs, exhaustion
+			//target stats: distance, speed, turns since last move (moving target)
+			
+			//accuracy over time:
+			//y=(min-max)*rate^-x + max
+			
+			//min: accuracy over distance + weapon skill (small)
+			//max: accuracy over distance + weapon skill (medium)
+			//rate:accuracy over distance + weapon skill (large)
+			
+			//recoil curve: y=(min-1)*rate^x+1
+			//x = x + recoil * recoilResistance - recoilRecovery (delayed)
+			//accuracy = accuracy over time - recoilCurve
+			
+			if (m_equippedWeapon == null)
+				return 0;
+				
+			if (!GameManager.instance().world.tileVisible(target.getGridX(), target.getGridY(), this))
+				return 0;
+				
+			var turnsAimed:int = 0;
+			if (target == m_targetAimed)
+				turnsAimed = m_turnsAimed;
+				
+			return -0.5 * Math.pow(2, -turnsAimed) + 1.0;
 		}
 		
 	}

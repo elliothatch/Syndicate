@@ -20,6 +20,10 @@ package
 		private var aimLine:FlxGroup;
 		private var acted:Boolean;
 		
+		
+		private var hud:FlxUIGroup;
+		private var hitAccuracyText:FlxText;
+		
 		override public function create():void
 		{
 			super.create();
@@ -34,8 +38,18 @@ package
 			aimLine = new FlxGroup();
 			acted = false;
 			
+			hud = new FlxUIGroup();
+			
+			hitAccuracyText = new FlxText(10, 10, 100);
+			hitAccuracyText.color = 0x00aa11;
+			hitAccuracyText.visible = false;
+			
+			hud.add(hitAccuracyText);
+			
+			
 			add(world);
 			add(aimLine);
+			add(hud);
 			
 		}
 		
@@ -48,6 +62,8 @@ package
 			}
 			FlxG.camera.x = (cameraGridX - int(GameManager.instance().screenTileWidth / 2)) * -Tile.TILE_SIZE_X;
 			FlxG.camera.y = (cameraGridY - int(GameManager.instance().screenTileHeight / 2)) * -Tile.TILE_SIZE_Y;
+			FlxG.camera.x = Math.min(0, Math.max(-(FlxG.width - FlxG.stage.stageWidth), FlxG.camera.x));
+			FlxG.camera.y = Math.min(0, Math.max(-(FlxG.height - FlxG.stage.stageHeight), FlxG.camera.y));
 			//if(!animationPlaying)
 			if (currentActor == null)
 				currentActor = world.getNextIdleActor();
@@ -144,6 +160,8 @@ package
 				{
 					//enter aim mode
 					cameraAimMode = true;
+					hitAccuracyText.visible = true;
+					hitAccuracyText.text = "accuracy: ";
 					updateAimLine();
 				}
 		}
@@ -155,6 +173,7 @@ package
 					{
 						cameraGridX++;
 						updateAimLine();
+						updateAccuracyText();
 					}
 				}
 				else if (FlxG.keys.justPressed("UP"))
@@ -163,6 +182,7 @@ package
 					{
 						cameraGridY--;
 						updateAimLine();
+						updateAccuracyText();
 					}
 				}
 				else if (FlxG.keys.justPressed("LEFT"))
@@ -171,6 +191,7 @@ package
 					{
 						cameraGridX--;
 						updateAimLine();
+						updateAccuracyText();
 					}
 				}
 				else if (FlxG.keys.justPressed("DOWN"))
@@ -179,15 +200,33 @@ package
 					{
 						cameraGridY++;
 						updateAimLine();
+						updateAccuracyText();
 					}
 				}
 				else if (FlxG.keys.justPressed("F"))
 				{
-					for each(var oldSprite:FlxSprite in aimLine)
-						oldSprite.destroy();
-					aimLine.clear();
-					cameraAimMode = false;
+					exitAimMode();
 				}
+				else if (FlxG.keys.justPressed("X"))
+				{
+					var target:Actor = world.getActor(cameraGridX, cameraGridY);
+					if (target != null)
+					{
+						world.aimAtTarget(playerActor, target);
+						acted = true;
+						updateAccuracyText();
+						//exitAimMode();
+					}
+				}
+		}
+		
+		private function exitAimMode():void
+		{
+			for each(var oldSprite:FlxSprite in aimLine)
+				oldSprite.destroy();
+			aimLine.clear();
+			cameraAimMode = false;
+			hitAccuracyText.visible = false;
 		}
 		
 		private function updateAimLine():void
@@ -211,6 +250,20 @@ package
 				else
 					sprite.makeGraphic(Tile.TILE_SIZE_X, Tile.TILE_SIZE_Y, 0xffff3333);
 				aimLine.add(sprite);
+			}
+		}
+		
+		private function updateAccuracyText():void
+		{
+			//update accuracy text
+			var target:Actor = world.getActor(cameraGridX, cameraGridY);
+			if (target != null)
+			{
+				hitAccuracyText.text = "accuracy: " + playerActor.getHitChance(target) + "%";
+			}
+			else
+			{
+				hitAccuracyText.text = "accuracy: ???%";
 			}
 		}
 	}

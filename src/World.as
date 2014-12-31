@@ -117,27 +117,6 @@ package
 			return m_idleActors.pop();
 		}
 		
-		public function moveActor(X:int, Y:int, actor:Actor):void
-		{
-			actor.setPosition(X, Y);
-			actor.changeMoveCooldown(1);
-		}
-		
-		public function equipWeapon(actor:Actor, weapon:Weapon):void
-		{
-			actor.equipWeapon(weapon);
-			removeItem(weapon);
-			actor.changeMoveCooldown(1);
-		}
-		
-		public function unequipWeapon(actor:Actor):void
-		{
-			var weapon:Weapon = actor.getEquippedWeapon();
-			actor.equipWeapon(null);
-			addItem(actor.getGridX(), actor.getGridY(), weapon);
-			actor.changeMoveCooldown(1);
-		}
-		
 		public function addItem(X:int, Y:int, item:Item):void
 		{
 			m_items.push(item);
@@ -165,6 +144,16 @@ package
 		public function getTile(X:int, Y:int):Tile
 		{
 			return m_tiles[X][Y];
+		}
+		
+		public function getActor(X:int, Y:int):Actor
+		{
+			for each(var actor:Actor in m_actors)
+			{
+				if (actor.getGridX() == X && actor.getGridY() == Y)
+					return actor;
+			}
+			return null;
 		}
 		
 		public function tileVisible(X:int, Y:int, actor:Actor):Boolean
@@ -215,6 +204,37 @@ package
 			}
 		}
 		
+		//ACTOR COMMANDS
+		public function moveActor(X:int, Y:int, actor:Actor):void
+		{
+			actor.cancelAim();
+			actor.setPosition(X, Y);
+			actor.changeMoveCooldown(1);
+		}
+		
+		public function equipWeapon(actor:Actor, weapon:Weapon):void
+		{
+			actor.cancelAim();
+			actor.equipWeapon(weapon);
+			removeItem(weapon);
+			actor.changeMoveCooldown(1);
+		}
+		
+		public function unequipWeapon(actor:Actor):void
+		{
+			actor.cancelAim();
+			var weapon:Weapon = actor.getEquippedWeapon();
+			actor.equipWeapon(null);
+			addItem(actor.getGridX(), actor.getGridY(), weapon);
+			actor.changeMoveCooldown(1);
+		}
+		
+		public function aimAtTarget(actor:Actor, target:Actor):void
+		{
+			actor.aimAtTarget(target);
+			actor.changeMoveCooldown(1);
+		}
+		
 		override public function draw():void
 		{
 			//first draw all the tiles on screen
@@ -248,6 +268,8 @@ package
 		{
 			super.destroy();
 		}
+		
+		
 	}
 
 }

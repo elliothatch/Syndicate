@@ -14,6 +14,7 @@ package
 			super(X, Y, ITEM_WEAPON);
 			m_weaponType = weaponType;
 		}
+		
 	}
 	
 }

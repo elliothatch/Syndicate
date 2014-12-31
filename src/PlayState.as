@@ -23,6 +23,7 @@ package
 		
 		private var hud:FlxUIGroup;
 		private var hitAccuracyText:FlxText;
+		private var hitAccuracyGraph:FlxGraph;
 		
 		override public function create():void
 		{
@@ -43,8 +44,16 @@ package
 			hitAccuracyText = new FlxText(10, 10, 100);
 			hitAccuracyText.color = 0x00aa11;
 			hitAccuracyText.visible = false;
-			
 			hud.add(hitAccuracyText);
+			
+			hitAccuracyGraph = new FlxGraph(10, 30, 100, 100);
+			hitAccuracyGraph.calcAndSetPoints(function(x:Number):Number { return -0.5 * Math.pow(2, -x) + 1.0; }, 0.0, 5.0, 0.2);
+			hitAccuracyGraph.lineThickness = 2;
+			hitAccuracyGraph.xGridLines = new <Number>[0,1,2,3,4,5];
+			hitAccuracyGraph.yGridLines = new <Number>[0.01,0.51, 0.7, 0.8, 0.9, 0.98];
+			hitAccuracyGraph.minX = 0.0;
+			hitAccuracyGraph.minY = 0.0;
+			hud.add(hitAccuracyGraph);
 			
 			
 			add(world);

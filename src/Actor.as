@@ -86,7 +86,16 @@ package
 			m_turnsAimed = 0;
 		}
 		
-		public function getHitChance(target:Actor):Number
+		public function getCurrentHitChance(target:Actor):Number
+		{
+			var turnsAimed:uint = 0;
+			if (target == m_targetAimed)
+				turnsAimed = m_turnsAimed;
+				
+			return getHitChance(target, turnsAimed);
+		}
+		
+		public function getHitChance(target:Actor, turnsAimed:Number ):Number
 		{
 			//weapon stats: accuracy over distance, recoil
 			//player stats: weapon skill, recoil recovery, recoil resistance, specific buffs, exhaustion
@@ -109,11 +118,13 @@ package
 			if (!GameManager.instance().world.tileVisible(target.getGridX(), target.getGridY(), this))
 				return 0;
 				
-			var turnsAimed:int = 0;
-			if (target == m_targetAimed)
-				turnsAimed = m_turnsAimed;
-				
-			return -0.5 * Math.pow(2, -turnsAimed) + 1.0;
+			var distance:Number = Math.sqrt(Math.pow(m_gridX - target.getGridX(), 2) + Math.pow(m_gridY - target.getGridY(), 2));
+			var min:Number = m_equippedWeapon.getMinAccuracyAtDistance(distance);
+			var max:Number = m_equippedWeapon.getMaxAccuracyAtDistance(distance);
+			var rate:Number = m_equippedWeapon.getAccuracyGrowthAtDistance(distance);
+			
+			return (min - max) * Math.pow(rate, -turnsAimed) + max;
+			//return -0.5 * Math.pow(2, -turnsAimed) + 1.0;
 		}
 		
 	}

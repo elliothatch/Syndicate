@@ -57,6 +57,12 @@ package
 		override public function draw():void 
 		{
 			super.draw();
+		}
+		
+		private function redrawGraph():void
+		{
+			this.fill(0x00000000);
+			
 			var xRange:Number = m_maxX - m_minX;
 			var yRange:Number = m_maxY - m_minY;
 			
@@ -102,6 +108,8 @@ package
 				if (y > m_maxY)
 					m_maxY = y;
 			}
+			
+			redrawGraph();
 		}
 		
 		//func must be a function with the signature func(Number):FlxPoint
@@ -121,6 +129,7 @@ package
 
         public function set lineColor(value:uint):void {
             m_lineColor = value;
+			redrawGraph();
         }
 		
 		public function get lineThickness():uint {
@@ -129,6 +138,7 @@ package
 
         public function set lineThickness(value:uint):void {
             m_lineThickness = value;
+			redrawGraph();
         }
 		
 		public function get xGridLines():Vector.<Number> 
@@ -139,6 +149,7 @@ package
 		public function set xGridLines(value:Vector.<Number>):void 
 		{
 			m_xGridLines = value;
+			redrawGraph();
 		}
 		
 		public function get yGridLines():Vector.<Number> 
@@ -149,6 +160,7 @@ package
 		public function set yGridLines(value:Vector.<Number>):void 
 		{
 			m_yGridLines = value;
+			redrawGraph();
 		}
 		
 		public function get xGridLineColor():uint 
@@ -159,6 +171,7 @@ package
 		public function set xGridLineColor(value:uint):void 
 		{
 			m_xGridLineColor = value;
+			redrawGraph();
 		}
 		
 		public function get xGridLineThickness():uint 
@@ -169,6 +182,7 @@ package
 		public function set xGridLineThickness(value:uint):void 
 		{
 			m_xGridLineThickness = value;
+			redrawGraph();
 		}
 		
 		public function get yGridLineColor():uint 
@@ -179,6 +193,7 @@ package
 		public function set yGridLineColor(value:uint):void 
 		{
 			m_yGridLineColor = value;
+			redrawGraph();
 		}
 		
 		public function get yGridLineThickness():uint 
@@ -189,6 +204,7 @@ package
 		public function set yGridLineThickness(value:uint):void 
 		{
 			m_yGridLineThickness = value;
+			redrawGraph();
 		}
 		
 		public function get minX():Number 
@@ -199,6 +215,7 @@ package
 		public function set minX(value:Number):void 
 		{
 			m_minX = value;
+			redrawGraph();
 		}
 		
 		public function get maxX():Number 
@@ -209,6 +226,7 @@ package
 		public function set maxX(value:Number):void 
 		{
 			m_maxX = value;
+			redrawGraph();
 		}
 		
 		public function get minY():Number 
@@ -219,6 +237,7 @@ package
 		public function set minY(value:Number):void 
 		{
 			m_minY = value;
+			redrawGraph();
 		}
 		
 		public function get maxY():Number 
@@ -229,6 +248,7 @@ package
 		public function set maxY(value:Number):void 
 		{
 			m_maxY = value;
+			redrawGraph();
 		}
 		
 	}

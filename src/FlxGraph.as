@@ -30,6 +30,10 @@ package
 		protected var m_yGridLineColor:uint;
 		protected var m_yGridLineThickness:uint;
 		
+		protected var m_xHighlightLine:Number;
+		protected var m_xHighlightLineColor:uint;
+		protected var m_xHighlightLineThickness:uint;
+		
 		public function FlxGraph(X:Number, Y:Number, width:uint, height:uint) 
 		{
 			super(X, Y);
@@ -52,6 +56,10 @@ package
 			
 			m_yGridLineColor = 0xFF000000;
 			m_yGridLineThickness = 1;
+			
+			m_xHighlightLine = 0;
+			m_xHighlightLineColor = 0xFFFF0000;
+			m_xHighlightLineThickness = 1;
 		}
 		
 		override public function draw():void 
@@ -85,6 +93,9 @@ package
 							  (m_values[i + 1].x - m_minX) / xRange * m_width, (1.0-(m_values[i + 1].y - m_minY) / yRange) * m_height,
 							   m_lineColor, m_lineThickness);
 			}
+			
+			var hiX:Number = (m_xHighlightLine - m_minX) / xRange * m_width;
+			this.drawLine(hiX, 0.0, hiX, m_height, m_xHighlightLineColor, m_xHighlightLineThickness);
 		}
 		
 		public function setPoints(points:Vector.<FlxPoint>):void
@@ -248,6 +259,39 @@ package
 		public function set maxY(value:Number):void 
 		{
 			m_maxY = value;
+			redrawGraph();
+		}
+		
+		public function get xHighlightLine():Number
+		{
+			return m_xHighlightLine;
+		}
+		
+		public function set xHighlightLine(value: Number):void 
+		{
+			m_xHighlightLine = value;
+			redrawGraph();
+		}
+		
+		public function get xHighlightLineColor():uint 
+		{
+			return m_xHighlightLineColor;
+		}
+		
+		public function set xHighlightLineColor(value:uint):void 
+		{
+			m_xHighlightLineColor = value;
+			redrawGraph();
+		}
+		
+		public function get xHighlightLineThickness():uint 
+		{
+			return m_xHighlightLineThickness;
+		}
+		
+		public function set xHighlightLineThickness(value:uint):void 
+		{
+			m_xHighlightLineThickness = value;
 			redrawGraph();
 		}
 		

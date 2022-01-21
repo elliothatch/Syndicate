@@ -268,10 +268,11 @@ package
 			var target:Actor = world.getActor(cameraGridX, cameraGridY);
 			if (target != null)
 			{
-				hitAccuracyText.text = "accuracy: " + playerActor.getCurrentHitChance(target) + "%";
+				hitAccuracyText.text = "accuracy: " + Math.round(playerActor.getCurrentHitChance(target)*100) + "%";
 				hitAccuracyGraph.calcAndSetPoints(function(x:Number) { return playerActor.getHitChance(target, x); }, 0.0, 8.0, 0.2);
 				hitAccuracyGraph.minY = 0.0;
 				hitAccuracyGraph.maxY = 1.0;
+				hitAccuracyGraph.xHighlightLine = playerActor.getTurnsAimed(target);
 			}
 			else
 			{

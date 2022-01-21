@@ -43,7 +43,9 @@ package
 				for (var y:int = 0; y < height; y++)
 				{
 					if (x == 0 || y == 0 || x == width - 1 || y == height - 1 ||
-						(x == 5 && (y < 4 || y > 12)) || (x == 10 && y == 10))
+						(x == 5 && (y < 4 || y > 12)) || (x == 10 && y == 10) ||
+						(y > 12 && y < 30 && (x % 6 < 3) && (y % 7 < 4 )) ||
+						(y > 32 && (x % 5 < 3) && (y % 3 < 2 )))
 					{
 						var tile:Tile = new Tile(x, y, Tile.TILE_WALL);
 						m_tiles[x].push(tile);

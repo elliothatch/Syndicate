@@ -86,13 +86,18 @@ package
 			m_turnsAimed = 0;
 		}
 		
-		public function getCurrentHitChance(target:Actor):Number
+		public function getTurnsAimed(target:Actor):Number
 		{
 			var turnsAimed:uint = 0;
 			if (target == m_targetAimed)
 				turnsAimed = m_turnsAimed;
 				
-			return getHitChance(target, turnsAimed);
+			return turnsAimed;
+		}
+		
+		public function getCurrentHitChance(target:Actor):Number
+		{
+			return getHitChance(target, this.getTurnsAimed(target));
 		}
 		
 		public function getHitChance(target:Actor, turnsAimed:Number ):Number
